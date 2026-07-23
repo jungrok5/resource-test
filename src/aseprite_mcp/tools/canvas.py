@@ -25,12 +25,17 @@ print("created " .. spr.width .. "x" .. spr.height)
     return f"Canvas created: {path} ({output})"
 
 
-async def add_frame(filename: str, duration_ms: int = 100) -> str:
-    """Append a new animation frame (duplicating the last frame's content)."""
+async def add_frame(filename: str, duration_ms: int = 100, empty: bool = False) -> str:
+    """Append a new animation frame.
+
+    By default the new frame duplicates the last frame's content; pass
+    empty=true to start from a blank frame.
+    """
     path = os.path.abspath(filename)
+    new_frame = "spr:newEmptyFrame(#spr.frames + 1)" if empty else "spr:newFrame()"
     script = f"""
 local spr = app.sprite
-local frame = spr:newFrame()
+local frame = {new_frame}
 frame.duration = {max(duration_ms, 1)} / 1000
 spr:saveAs({lua_quote(path)})
 print("frames=" .. #spr.frames)

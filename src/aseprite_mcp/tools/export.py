@@ -13,6 +13,8 @@ async def export_sprite(
     """Export a sprite to PNG/GIF/etc. GIF keeps animation frames.
 
     scale uses nearest-neighbor upscaling (pixel-art friendly).
+    Exporting a multi-frame sprite to a still format like PNG writes one
+    file per frame (name1.png, name2.png, ...).
     """
     path = os.path.abspath(filename)
     if not os.path.isfile(path):

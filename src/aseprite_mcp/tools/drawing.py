@@ -51,18 +51,23 @@ async def draw_pixels(filename: str, pixels: list[dict], frame: int = 1) -> str:
     if not by_color:
         return "No pixels given; nothing drawn."
 
+    # One useTool call per pixel: passing several points in a single call
+    # would connect them with pencil strokes instead of stamping dots.
     chunks = []
     for color, points in by_color.items():
-        lua_points = ", ".join(f"Point({x}, {y})" for x, y in points)
+        point_list = ", ".join(f"Point({x}, {y})" for x, y in points)
         chunks.append(
             f"""
-app.useTool{{
-  tool = "pencil",
-  color = {lua_color(color)},
-  brush = Brush(1),
-  points = {{ {lua_points} }},
-  frame = frame,
-}}"""
+local color = {lua_color(color)}
+for _, pt in ipairs({{ {point_list} }}) do
+  app.useTool{{
+    tool = "pencil",
+    color = color,
+    brush = Brush(1),
+    points = {{ pt }},
+    frame = frame,
+  }}
+end"""
         )
     script = f"""
 local spr = app.sprite

@@ -12,6 +12,18 @@ class AsepriteError(Exception):
     """Raised when the Aseprite CLI fails or cannot be found."""
 
 
+# Locations tried (in order) when ASEPRITE_PATH is not set and 'aseprite'
+# is not on PATH. Covers the scripts/setup-aseprite.sh default prefix and
+# common desktop installs.
+FALLBACK_PATHS = (
+    os.path.expanduser("~/aseprite/aseprite"),
+    "/usr/local/bin/aseprite",
+    "/Applications/Aseprite.app/Contents/MacOS/aseprite",
+    os.path.expanduser("~/.steam/steam/steamapps/common/Aseprite/aseprite"),
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Aseprite\\Aseprite.exe",
+)
+
+
 def aseprite_binary() -> str:
     """Return the Aseprite executable path (override with ASEPRITE_PATH)."""
     return os.environ.get("ASEPRITE_PATH", "aseprite")
@@ -20,11 +32,16 @@ def aseprite_binary() -> str:
 def ensure_aseprite_available() -> str:
     binary = aseprite_binary()
     resolved = shutil.which(binary) or (binary if os.path.isfile(binary) else None)
+    if resolved is None and "ASEPRITE_PATH" not in os.environ:
+        for candidate in FALLBACK_PATHS:
+            if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
+                resolved = candidate
+                break
     if resolved is None:
         raise AsepriteError(
             f"Aseprite executable not found: '{binary}'. "
-            "Install Aseprite and/or set the ASEPRITE_PATH environment variable "
-            "to the full path of the executable."
+            "Install Aseprite (see scripts/setup-aseprite.sh for a headless build) "
+            "and/or set the ASEPRITE_PATH environment variable to the executable."
         )
     return resolved
 
