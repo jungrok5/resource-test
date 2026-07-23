@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "aseprite": {
+      "command": "uv",
+      "args": ["run", "aseprite-mcp"],
+      "env": {}
+    }
+  }
+}
