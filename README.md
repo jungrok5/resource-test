@@ -22,6 +22,12 @@ MCP 서버가 실행되는 머신에 Aseprite가 설치되어 있어야 합니�
 
 - **구매판 (권장)**: [Steam](https://store.steampowered.com/app/431730/Aseprite/) 또는 [aseprite.org](https://www.aseprite.org/)에서 구매 후 설치
 - **소스 빌드 (무료)**: 소스는 공개되어 있어 직접 빌드하면 무료로 사용 가능 — [빌드 가이드](https://github.com/aseprite/aseprite/blob/main/INSTALL.md)
+- **헤드리스 빌드 (서버/컨테이너용)**: GUI 없는 환경에서는 포함된 스크립트로 CLI 전용 빌드가 가능합니다 (Skia/GPU 불필요, MCP 서버에 필요한 배치 모드·Lua 스크립팅·내보내기 모두 지원):
+
+  ```bash
+  scripts/setup-aseprite.sh ~/aseprite
+  export ASEPRITE_PATH=~/aseprite/aseprite
+  ```
 
 설치 후 `aseprite` 명령이 PATH에 없다면 `ASEPRITE_PATH` 환경 변수로 실행 파일 경로를 지정하세요.
 
